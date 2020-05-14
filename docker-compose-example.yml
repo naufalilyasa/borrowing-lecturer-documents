@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:12-alpine
+    restart: unless-stopped
+    container_name: bld-postgres
+    environment:
+      POSTGRES_PASSWORD: your-password
+    volumes:
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data
+    ports:
+      - 127.0.0.1:5431:5432
+    networks:
+      - default
+  pgadmin4:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    container_name: bld-pgadmin4
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@test.com
+      PGADMIN_DEFAULT_PASSWORD: your-password
+    volumes:
+      - type: volume
+        source: pgadmin4-data
+        target: /var/lib/pgadmin
+    networks:
+      - default
+    ports:
+      - 127.0.0.1:8000:80
+volumes:
+  postgres-data:
+  pgadmin4-data:
+networks:
+  default:
