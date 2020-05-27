@@ -1,5 +1,14 @@
-const { setup, signToken, hashPassword, verifyPassword } = require("./utils");
-const { JWTStrategy } = require("./strategies");
+const {
+  setup,
+  signToken,
+  hashPassword,
+  verifyPassword,
+  checkIsInRole,
+  ROLES,
+  getRedirectUrl,
+} = require("./utils");
+
+const { JWTStrategy, GoogleStrategy } = require("./strategies");
 
 const pipe = (...functions) => (args) =>
   functions.reduce((arg, fn) => fn(arg), args);
@@ -7,7 +16,7 @@ const pipe = (...functions) => (args) =>
 const initialiseAuthentication = (app) => {
   setup();
 
-  pipe(JWTStrategy)(app);
+  pipe(GoogleStrategy, JWTStrategy)(app);
 };
 
 module.exports = {
@@ -15,5 +24,8 @@ module.exports = {
   signToken,
   hashPassword,
   verifyPassword,
-  initialiseAuthentication /*, strategies*/,
+  initialiseAuthentication,
+  checkIsInRole,
+  ROLES,
+  getRedirectUrl,
 };

@@ -1,4 +1,5 @@
 const model = require("../../models");
+// const { ROLES } = require("../../auth");
 
 const createUser = async ({
   firstName,
@@ -10,14 +11,14 @@ const createUser = async ({
   password,
   providerId = "",
   provider = "",
+  role,
 }) => {
   try {
-    const user = await model.User.findOne({ where: { email: email } });
+    // const user = await model.User.findOne({ where: { email: email } });
 
-    if (user) {
-      throw new Error("Email is already in use");
-    }
-
+    // if (user) {
+    //   throw new Error("Email is already taken.");
+    // }
     return await model.User.create({
       providerId,
       provider,
@@ -28,9 +29,10 @@ const createUser = async ({
       address,
       email,
       password,
+      role,
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 

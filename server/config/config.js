@@ -6,8 +6,8 @@ module.exports = {
     password: dbPassword,
     database: dbName,
     host: "127.0.0.1",
-    dialect: "postgres",
     port: dbPort,
+    dialect: "postgres",
   },
   test: {
     username: "database_test",

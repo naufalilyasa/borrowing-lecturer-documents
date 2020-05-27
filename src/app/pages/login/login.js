@@ -6,6 +6,12 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
+import axios from "axios";
+import dotenv from "dotenv";
+
+import { GoogleLoginButton } from "../components/GoogleLoginButton";
+
+dotenv.config();
 
 const useStyles = makeStyles((theme) => ({
   layout: {
@@ -40,6 +46,33 @@ const LoginForm = () => {
   const classes = useStyles({});
   const [formData, setFormData] = React.useState({ email: "", password: "" });
   const [submitting] = React.useState(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { email, password } = formData;
+    const userData = { email, password };
+    // try {
+    const response = await axios({
+      // proxy: {
+      //   host: "localhost",
+      //   port: 5000,
+      // },
+      baseURL: `${process.env.REACT_APP_BASE_API_URL}`,
+      url: `/auth/login`,
+      method: "POST",
+      withCredentials: true,
+      headers: { "Content-type": "application/json" },
+      responseType: "json",
+      data: JSON.stringify(userData),
+    });
+    const { success, data } = await response.data;
+    if (success) {
+      window.location.replace(data);
+      return;
+    }
+    // } catch (err) {
+    //   console.error(err);
+    // }
+  };
 
   return (
     <main className={classes.layout}>
@@ -57,7 +90,12 @@ const LoginForm = () => {
             Log in to your account dashboard
           </Typography>
         </Box>
-        <form method="post" className={classes.form} noValidate>
+        <form
+          method="post"
+          className={classes.form}
+          onSubmit={handleSubmit}
+          noValidate
+        >
           <TextField
             margin="normal"
             required
@@ -103,6 +141,10 @@ const LoginForm = () => {
               )}
               {submitting ? "Signing in..." : "Sign In"}
             </Button>
+            <Typography variant="overline" display="block" gutterBottom>
+              Social Login Providers
+            </Typography>
+            <GoogleLoginButton />
           </Box>
         </form>
       </Paper>

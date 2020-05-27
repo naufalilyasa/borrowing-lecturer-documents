@@ -6,7 +6,11 @@ import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { server } from "../../../utils";
+import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config();
+// import { server } from "../../utils";
 
 const useStyles = makeStyles((theme) => ({
   layout: {
@@ -51,10 +55,11 @@ const Register = () => {
     password: "",
   });
 
-  const [submitting, setSubmitting] = React.useState(false);
-
+  const [submitting] = React.useState(false);
+  // React.useEffect();
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const {
       firstName,
       lastName,
@@ -63,9 +68,10 @@ const Register = () => {
       address,
       email,
       password,
+      confirmPassword,
     } = formData;
 
-    const { success, data } = await server.postAsync("/auth/register", {
+    const userData = {
       firstName,
       lastName,
       ni,
@@ -73,11 +79,38 @@ const Register = () => {
       address,
       email,
       password,
+      confirmPassword,
+    };
+
+    // const { success, data } = await server.postAsync("/auth/register", {
+    //   userData,
+    // });
+    // if (success) {
+    //   window.location.replace(data);
+    //   return;
+    // }
+    // try {
+    const response = await axios({
+      // proxy: {
+      //   host: "localhost",
+      //   port: 5000,
+      // },
+      baseURL: `${process.env.REACT_APP_BASE_API_URL}`,
+      url: `/auth/register`,
+      method: "POST",
+      withCredentials: true,
+      headers: { "Content-type": "application/json" },
+      responseType: "json",
+      data: JSON.stringify(userData),
     });
+    const { success, data } = await response.data;
     if (success) {
       window.location.replace(data);
       return;
     }
+    // } catch (err) {
+    //   console.error(err);
+    // }
   };
 
   return (
@@ -94,7 +127,7 @@ const Register = () => {
           </Typography>
         </Box>
         <form
-          method="post"
+          method="POST"
           className={classes.form}
           noValidate
           onSubmit={handleSubmit}
@@ -184,10 +217,24 @@ const Register = () => {
             label="Password"
             type="password"
             id="password"
-            autoComplete="new-password"
+            autoComplete="password"
             defaultValue={formData.password}
             onChange={(e) =>
               setFormData({ ...formData, password: e.target.value })
+            }
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            id="confirmPassword"
+            autoComplete="confirmpassword"
+            defaultValue={formData.confirmPassword}
+            onChange={(e) =>
+              setFormData({ ...formData, confirmPassword: e.target.value })
             }
           />
           <Box mb={6}>

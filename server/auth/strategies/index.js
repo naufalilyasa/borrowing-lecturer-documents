@@ -1,4 +1,6 @@
-const { strategy } = require("./jwt");
-const JWTStrategy = strategy;
+const { jwtStrategy } = require("./jwt");
+const { googleStrategy } = require("./google");
+const JWTStrategy = jwtStrategy;
+const GoogleStrategy = googleStrategy;
 
-module.exports = { JWTStrategy };
+module.exports = { JWTStrategy, GoogleStrategy };
